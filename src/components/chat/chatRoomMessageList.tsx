@@ -32,7 +32,7 @@ function ChatRoomMessageList() {
         position,
         date: message.createdAt
       }
-      console.log('shownMessage: ', shownMessage);
+      // console.log('shownMessage: ', shownMessage);
       return shownMessage;
     })
   }, [activeRoom?.ownerId, currentUser, messages])

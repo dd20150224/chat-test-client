@@ -151,21 +151,32 @@ export const ChatProvider = ({children}: {children:any}) => {
     socket.on('rooms-status', (data) => {
       console.log('rooms-status: data: ', JSON.stringify(data))
       const groupRooms = data.rooms.filter(
-        (room: { ownerId: any }) => room.ownerId
+        (room: { ownerId: any }) => (room.ownerId !== '')
       )
+    
+      // remove activeRoom if it is group room and not in groupRooms
+      if (activeRoom && activeRoom.ownerId !== '') {
+        const groupRoom = groupRooms.find((room: { id: string; }) => room.id === activeRoom.id);
+        if (!groupRoom) {
+          setActiveRoom(null);
+        }
+      }
+      console.log('rooms-status: groupRooms.length: ', groupRooms.length);
       setRooms(groupRooms)
     })
 
     socket.on('room-status', ({room: updatedRoom}) => {
+      console.log('room-status: updatedRoom: ', updatedRoom);
       if (activeRoom && (updatedRoom.id === activeRoom.id)) {
         setActiveRoom(updatedRoom)
       }
       setRooms(prev => {
         const index = rooms.findIndex(room => room.id === updatedRoom.id);
         if (index >= 0) {
+          // update
           rooms.splice(index, 1, updatedRoom);
           return [...rooms];
-        } 
+        }
         return prev;
       })
       // console.log('room-status: data: ', data);
