@@ -1,12 +1,11 @@
-import { useRef, useMemo, useCallback, useEffect } from 'react';
+import { useRef, useMemo, useEffect } from 'react';
 import { MessageBox } from "react-chat-elements";
-// import { IMessage } from 'react-chat-elements';
 import { IUser, IShownMessage } from '@/types';
 import useChat from './useChat';
 import './chatRoomMessageList.css';
 
 function ChatRoomMessageList() {
-  const { users, messages, activeRoom, currentUser } = useChat();
+  const { messages, activeRoom, currentUser } = useChat();
   const messageList = useRef<HTMLDivElement>(document.createElement('div'));
 
   // const getSenderName = useCallback(
