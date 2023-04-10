@@ -12,6 +12,7 @@ import socketio from 'socket.io-client';
 console.log(
   'process.env.REACT_APP_CHAT_ENDPOINT = ' + process.env.REACT_APP_CHAT_ENDPOINT
 )
+
 export const socket = socketio(process.env.REACT_APP_CHAT_ENDPOINT as string)
 socket.on('connect', () => {
   console.log('Socket connected.')
