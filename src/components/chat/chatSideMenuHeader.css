@@ -1,0 +1,31 @@
+.left-to-right-motion {
+  animation: moveLeftToRight 1s infinite;
+}
+
+.right-to-left-motion {
+  animation: moveRightToLeft 1s infinite;
+}
+
+@keyframes moveLeftToRight {
+  0% {
+    margin-right: 10px;
+  }
+  50% {
+    margin-right: 0;
+  }
+  100% {
+    margin-right: 10px;
+  }
+}
+
+@keyframes moveRightToLeft {
+  0% {
+    margin-left: 10px;
+  }
+  50% {
+    margin-left: 0;
+  }
+  100% {
+    margin-left: 10px;
+  }
+}
