@@ -9,15 +9,16 @@ function ChatRoomMessageList() {
   const { users, messages, activeRoom, currentUser } = useChat();
   const messageList = useRef<HTMLDivElement>(document.createElement('div'));
 
-  const getSenderName = useCallback(
-    (userId: string) => {
-      const user = users.find((u) => u.id === userId)
-      return user ? user.displayName : '(Unknown)'
-    },
-    [users]
-  )
+  // const getSenderName = useCallback(
+  //   (userId: string) => {
+  //     const user = users.find((u) => u.id === userId)
+  //     return user ? user.displayName : '(Unknown)'
+  //   },
+  //   [users]
+  // )
 
   const shownMessages: IShownMessage[] = useMemo(() => {
+    console.log('showMessages: messages: ', messages);
     return messages.map(message => {
       const position =
         (currentUser as IUser).id === message.senderId ? 'right' : 'left'

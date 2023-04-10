@@ -2,7 +2,6 @@ import { useEffect, useMemo, useCallback } from 'react';
 import { useState } from 'react';
 import { IUser, IRoom } from '@/types';
 import useChat from '@/components/chat/useChat';
-import { isJSDocReadonlyTag, ShorthandPropertyAssignment } from 'typescript';
 
 interface IRoomSetupDialog {
   roomId?: string;
@@ -18,16 +17,27 @@ const NEW_ROOM = {
 };
 
 const RoomSetupDialog = ({roomId='', onClose, onConfirm}: IRoomSetupDialog) => {
-  const { users, onlineUserIds, rooms, currentUser } = useChat();
+  const { users, rooms, currentUser } = useChat();
   // console.log('RoomSetupDialog starts');
   const [ activeRoom, SetActiveRoom ] = useState<IRoom>(NEW_ROOM);
 
   const getNextRoomName = useCallback(() => {
     let count = 1;
-    let roomName = `Room #${count}`;
-    while (rooms.find(r => r.name === roomName)) {
+    let roomName:string = `Room #${count}`;
+    let foundRoom = rooms.find(r => {
+      return r.name === roomName
+    });
+    while (foundRoom) {
       count++;
       roomName = `Room #${count}`;
+      foundRoom = undefined;
+      for (let i = 0; i < rooms.length; i++) {
+        const loopRoom = rooms[i];
+        if (loopRoom.name === roomName) {
+          foundRoom = loopRoom;
+          break;
+        }
+      }
     }
     return roomName;
   }, [rooms]);

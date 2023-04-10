@@ -1,7 +1,7 @@
-import { useState, useCallback } from 'react';
+// import { useState, useCallback } from 'react';
 import ChatTargetList from './chatTargetList';
 // import AccountSelectionDialog from '../dialogs/accountSelectionDialog';
-import { IUser, IRoom } from '@/types';
+// import { IUser, IRoom } from '@/types';
 import ChatSideMenuHeader from './chatSideMenuHeader';
 // import RoomSetupDialog from '@/components/dialogs/roomSetupDialog'
 
@@ -11,7 +11,7 @@ interface IChatSideMenu {
   onCommand: (payload: any) => void;
 }
 const ChatSideMenu = ({onCommand}: IChatSideMenu) => {
-  const { users, currentUser, onlineUserIds } = useChat();
+  // const { users, currentUser, onlineUserIds } = useChat();
 
 
   // const onShowSelection = useCallback(() => {

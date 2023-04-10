@@ -273,7 +273,7 @@ export const ChatProvider = ({children}: {children:any}) => {
       socket.off('message');
       socket.off('leave-room');
     };
-  },[activeRoom]);
+  },[activeRoom, rooms]);
 
   useEffect(() => {
     if (currentUser) {

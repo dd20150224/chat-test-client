@@ -1,4 +1,4 @@
-import { useMemo, useEffect } from 'react';
+import { useMemo } from 'react';
 import useChat from './useChat';
 import { IRoom, IUser } from '@/types';
 import { HiEllipsisHorizontal } from 'react-icons/hi2';
@@ -37,7 +37,10 @@ const ChatRoomHeader = ({onCommand}: IChatRoomHeader) => {
   }, [currentUser, users, activeRoom])
 
   const roomName = useMemo(() => {
-    console.log('roomName.useMemo: activeRoom: ', activeRoom);
+    // console.log('roomName.useMemo: activeRoom: ', activeRoom);
+    // console.log('roomName.useMemo: userRoomName = ' + userRoomName);
+    // console.log('roomName.useMemo: isUserRoom = ' + (isUserRoom ? 'yes' : 'no'));
+
     if (isUserRoom) {
       return userRoomName
     } else {
@@ -73,7 +76,8 @@ const ChatRoomHeader = ({onCommand}: IChatRoomHeader) => {
     >
       <div className="grow flex flex-col h-full justify-center">
         <div className="grow-0" style={{ marginBottom: '2px' }}>
-          {roomName} #{activeRoom?.id}
+          {roomName}
+          {/* #{activeRoom?.id} */}
         </div>
         {roomUsers.length > 0 && (
           <div className="flex flex-row flex-wrap gap-1 leading-none">
@@ -90,14 +94,16 @@ const ChatRoomHeader = ({onCommand}: IChatRoomHeader) => {
           </div>
         )}
       </div>
-      <div className="grow-0">
-        <button
-          onClick={() => editRoom()}
-          className="p-1 text-2xl hover:bg-teal-600 transition-all duration-300 rounded-full"
-        >
-          <HiEllipsisHorizontal />
-        </button>
-      </div>
+      {!isUserRoom && (
+        <div className="grow-0">
+          <button
+            onClick={() => editRoom()}
+            className="p-1 text-2xl hover:bg-teal-600 transition-all duration-300 rounded-full"
+          >
+            <HiEllipsisHorizontal />
+          </button>
+        </div>
+      )}
     </div>
   )
 }
