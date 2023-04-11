@@ -14,17 +14,6 @@ const ChatTargetItemUser: FC<IChatTargetProps> = ({ item }: {item: IChatTarget }
   const { users, onlineUserIds, enterUserRoom, currentUser } = useChat()
   const [targetItem, setTargetItem] = useState<IUser|undefined>(undefined);
   const [ title, setTitle] = useState<string>('');
-
-  useEffect(() => {
-    console.log('useEffect set user: item: ', item);
-    const user = users.find(user => user.id === item.id);    
-    setTargetItem(user);
-  }, [item]);
-
-  // const targetItem: IUser | undefined = users.find(
-  //   (user) => user.id === item.id
-  // )
-
   const unread: number = 0
 
   const meta = useMemo(() => {
@@ -41,10 +30,16 @@ const ChatTargetItemUser: FC<IChatTargetProps> = ({ item }: {item: IChatTarget }
   }, [targetItem])
 
   useEffect(() => {
-    console.log('useEffect[targetItem] => updatedTitle: targetItem: ', targetItem);
+    console.log('useEffect[users] => setTargetItem item: ', item)
+    const user = users.find((user) => user.id === item.id)
+    setTargetItem({ ...user } as IUser)
+  }, [item, users])
+
+  useEffect(() => {
+    console.log('useEffect[targetItem] => setTitle: targetItem: ', targetItem);
     let updatedTitle = `${targetItem?.displayName}`;
     if (targetItem?.newMessageCount) {
-      updatedTitle = `${updatedTitle} ${targetItem.newMessageCount}`
+      updatedTitle = `${updatedTitle} (${targetItem.newMessageCount})`
     }
     setTitle(updatedTitle);
   }, [targetItem]);

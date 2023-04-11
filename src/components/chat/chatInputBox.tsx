@@ -5,7 +5,7 @@ import { HiRocketLaunch } from 'react-icons/hi2';
 const MIN_TEXTAREA_HEIGHT = 40;
 
 const ChatInputBox = () => {
-  const { sendMessage } = useChat();
+  const { sendMessage, resetMessageCount } = useChat();
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [value, setValue] = useState('')
   const onChange = (event: any) => setValue(event.target.value)
@@ -44,6 +44,7 @@ const ChatInputBox = () => {
     <div className="rounded flex flex-row grow-0 p-1 bg-red-200 line-height-1 h-12 ">
       <div className="relative grow bg-blue-200">
         <textarea ref={textareaRef}
+          onFocus={()=>resetMessageCount()}
           rows={1}
           onKeyDown={evt=>onKeyDownHandler(evt)}
           onChange={onChange}

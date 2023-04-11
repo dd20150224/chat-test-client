@@ -7,11 +7,14 @@ import socketio from 'socket.io-client';
 // import { icons } from 'react-icons/lib';
 
 console.log('process.env: ', process.env);
-console.log(
-  'process.env[NX_CHAT_TEST_ENDPOINT] = ' + process.env['NX_CHAT_TEST_ENDPOINT']
-)
+const endpoint =
+  process.env['REACT_APP_CHAT_ENDPOINT'] || 
+  process.env['NX_CHAT_TEST_ENDPOINT'] ||
+  'http://localhost:4000';
 
-export const socket = socketio(process.env['NX_CHAT_TEST_ENDPOINT'] as string)
+console.log('Socket Server Endpoint = ' + endpoint);
+
+export const socket = socketio(endpoint as string)
 
 socket.on('connect', () => {
   console.log('Socket connected.')
@@ -38,6 +41,8 @@ interface IChatContext {
   saveRoom: (room: IRoom) => void;
   sendMessage: (message: string) => void;
 
+  resetMessageCount: () => void;
+
   connect?: () => void;
   send?: (message: string) => void;
 }
@@ -59,6 +64,8 @@ const DEFAULT_VALUE: IChatContext = {
   setUsers: (usres: IUser[]) => {},
   saveRoom: (room: IRoom) => {},
   sendMessage: (message: string) => {},
+
+  resetMessageCount: () => {},
 }
 
 const ChatContext = createContext<IChatContext>(DEFAULT_VALUE);
@@ -81,6 +88,8 @@ const useChat = (): IChatContext => {
     setUsers,
     saveRoom,
     sendMessage,
+
+    resetMessageCount,
   } = useContext<IChatContext>(ChatContext);
 
 
@@ -117,6 +126,8 @@ const useChat = (): IChatContext => {
     setUsers,
     saveRoom,
     sendMessage,
+
+    resetMessageCount,
     
     connect,
     send,
@@ -150,8 +161,8 @@ export const ChatProvider = ({children}: {children:any}) => {
 
       // update new message count
       if (data.newMessagesInfo) {
-        const roomMessagesInfo = data.newMessagesInfo.filter(info => info.type === 'room');
-        const userMessagesInfo = data.newMessagesInfo.filter(info => info.type === 'user');
+        const roomMessagesInfo = data.newMessagesInfo.filter((info: { type: string; }) => info.type === 'room');
+        const userMessagesInfo = data.newMessagesInfo.filter((info: { type: string; }) => info.type === 'user');
 
         // update rooms
         setRooms(prev => {
@@ -213,13 +224,15 @@ export const ChatProvider = ({children}: {children:any}) => {
     socket.on('user-status-update', (data) => {
       console.log('user-status-update: data: ', data)
 
-      const newMessageCount = data.newMessageCount ? data.newMessageCount.length : 0;
+      const newMessageCount = data.newMessageCount ? data.newMessageCount : 0;
       setUsers(prev => {
         const userIndex = users.findIndex( user => user.id===data.userId );
         const user = users[userIndex];
         user.newMessageCount = newMessageCount;
         const result = [...prev];
         result.splice(userIndex, 1, user);
+        console.log('user-status-update: updated user: ', user);
+        console.log('user-status-update: updated users: ', users);
         return result;
       })
       
@@ -315,7 +328,7 @@ export const ChatProvider = ({children}: {children:any}) => {
       socket.off('message');
       socket.off('leave-room');
     };
-  },[activeRoom, rooms]);
+  },[activeRoom, rooms, users]);
 
   useEffect(() => {
     if (currentUser) {
@@ -374,6 +387,14 @@ export const ChatProvider = ({children}: {children:any}) => {
     socket.emit('enter-group-room', {roomId});
   }
 
+  const resetMessageCount = () => {
+    if (activeRoom && currentUser) {
+      const payload = { userId: currentUser.id, roomId: activeRoom.id };
+      console.log('resetMessageCount: payload: ', payload);
+      socket.emit('reset-room-new-message-count', payload);
+    }
+  }
+
   // const setUsers = (users: IUser[]) => {
   //   console.log('useChat: setUsers: ', users);
   //   setUsersx(users);
@@ -395,6 +416,8 @@ export const ChatProvider = ({children}: {children:any}) => {
     setUsers,
     saveRoom,
     sendMessage,
+
+    resetMessageCount,
   }
   return (
     <ChatContext.Provider value={value}>{children}</ChatContext.Provider>
