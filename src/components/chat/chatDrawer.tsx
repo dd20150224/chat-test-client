@@ -1,13 +1,13 @@
-import { IUser } from '../../types'
+import { IUser } from './types'
 import { ChatProvider } from './useChat'
 import ChatPanel from './chatPanel';
 
 interface IChatPanelPayload {
   users: IUser[]
-  endpoint: string
+  endpoint?: string
 }
 
-const ChatDrawer = ({ users, endpoint }: IChatPanelPayload) => {
+const ChatDrawer = ({ users, endpoint='' }: IChatPanelPayload) => {
   return (
     <ChatProvider>
       <ChatPanel users={users} endpoint={endpoint}/>

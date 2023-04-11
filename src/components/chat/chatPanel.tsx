@@ -3,7 +3,8 @@ import tw from 'tailwind-styled-components'
 import { HiChatBubbleLeftRight } from 'react-icons/hi2'
 
 // types
-import { IUser, IRoom } from '../../types';
+import { IUser, IRoom } from './types';
+import 'react-chat-elements/dist/main.css'
 
 // components
 import ChatRoomHeader from './chatRoomHeader';
@@ -17,8 +18,8 @@ import useChat from './useChat'
 // import { IChatTarget } from '@/dummyData/users'
 
 // dialogs
-import AccountSelectionDialog from '../dialogs/accountSelectionDialog'
-import RoomSetupDialog from '@/components/dialogs/roomSetupDialog'
+import AccountSelectionDialog from './dialogs/accountSelectionDialog'
+import RoomSetupDialog from './dialogs/roomSetupDialog'
 
 
 // import SplitterLayout from 'react-splitter-layout';
@@ -52,11 +53,11 @@ const ToggleButton = tw.div<any>`
 
 interface IChatPanelPayload {
   users: IUser[];
-  endpoint: string;
+  endpoint?: string;
 }
 
 const ChatPanel = ({users, endpoint}: IChatPanelPayload) => {
-  const [show, setShow] = useState(true);
+  const [show, setShow] = useState(false);
   const { currentUser, onlineUserIds, setUsers, activeRoom, setCurrentUser, saveRoom } = useChat();
   const [showSelection, setShowSelection] = useState(false)
   const [showRoomSetup, setShowRoomSetup] = useState(false)
@@ -121,13 +122,14 @@ const ChatPanel = ({users, endpoint}: IChatPanelPayload) => {
   
   return (
     <div
-      className={`transition-all duration-200 fixed top-20 bottom-5 right-0 ${
+      style={{bottom: '50px'}}
+      className={`transition-all duration-200 fixed top-20 right-0 ${
         show ? 'w-1/2' : 'w-0'
       }`}
     >
       <div className="relative h-full w-full">
         <div className="flex flex-row items-end h-full">
-          <div className="rounded-tl bg-teal-700 bg-opacity-50 flex flex-row h-full w-full">
+          <div className="rounded-tl bg-teal-700 bg-opacity-90 flex flex-row h-full w-full">
             {/* <SplitterLayout vertical={false}> */}
             <div className="z-20 p-2 h-full">
               <ChatSideMenu onCommand={onCommandHandler} />

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import useChat from './useChat';
-import { IRoom, IUser } from '@/types';
+import { IRoom, IUser } from './types';
 import { HiEllipsisHorizontal } from 'react-icons/hi2';
 
 interface IChatRoomHeader {

@@ -1,6 +1,6 @@
 import { useRef, useMemo, useEffect } from 'react';
 import { MessageBox } from "react-chat-elements";
-import { IUser, IShownMessage } from '@/types';
+import { IUser, IShownMessage } from './types';
 import useChat from './useChat';
 import './chatRoomMessageList.css';
 

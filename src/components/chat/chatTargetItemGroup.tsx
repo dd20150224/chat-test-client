@@ -1,9 +1,15 @@
 import { useState, useMemo, FC, useEffect } from 'react'
 import { ChatItem } from 'react-chat-elements'
-import useChat from './useChat'
-import { IChatTargetProps, IRoom } from '@/types'
-import './chatTargetItem.css'
 import { HiUserGroup } from 'react-icons/hi2';
+
+// types
+import { IChatTargetProps, IRoom } from './types'
+
+// hooks
+import useChat from './useChat'
+
+// styles
+import './chatTargetItem.css'
 
 const ChatTargetItemGroup: FC<IChatTargetProps> = ({ item }: IChatTargetProps) => {
   const { rooms, onlineUserIds, enterGroupRoom } = useChat();

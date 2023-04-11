@@ -1,4 +1,4 @@
-import { IChatTarget } from '@/types'
+import { IChatTarget } from './types'
 import './chatTargetItem.css'
 import ChatTargetItemUser from './chatTargetItemUser';
 import ChatTargetItemGroup from './chatTargetItemGroup';

@@ -1,19 +1,18 @@
-import { useCallback, useEffect, useState, useContext } from 'react';
-import { createContext } from 'react';
-import { IUser, IRoom, IMessage } from '@/types';
-// import { users } from '@/dummyData/data';
+import { useCallback, useEffect, useState, useContext, createContext } from 'react';
 
-// import { IMessage } from 'react-chat-elements';
-
+// types
+import { IUser, IRoom, IMessage } from './types';
 import socketio from 'socket.io-client';
 
 // import { icons } from 'react-icons/lib';
 
+console.log('process.env: ', process.env);
 console.log(
-  'process.env.REACT_APP_CHAT_ENDPOINT = ' + process.env.REACT_APP_CHAT_ENDPOINT
+  'process.env[NX_CHAT_TEST_ENDPOINT] = ' + process.env['NX_CHAT_TEST_ENDPOINT']
 )
 
-export const socket = socketio(process.env.REACT_APP_CHAT_ENDPOINT as string)
+export const socket = socketio(process.env['NX_CHAT_TEST_ENDPOINT'] as string)
+
 socket.on('connect', () => {
   console.log('Socket connected.')
   socket.emit('get-users-status');
@@ -132,7 +131,7 @@ export const ChatProvider = ({children}: {children:any}) => {
   const [ onlineUserIds, setOnlineUserIds ] = useState<Set<string>>(new Set());
   const [ rooms, setRooms ] = useState<IRoom[]>([]);
   const [ messages, setMessages ] = useState<IMessage[]>([]);
-  const [ users, setUsersx ] = useState<IUser[]>([]);
+  const [ users, setUsers ] = useState<IUser[]>([]);
 
   // const getSenderName = useCallback((userId: string) => {
   //   const user = users.find(u => u.id === userId);
@@ -141,11 +140,40 @@ export const ChatProvider = ({children}: {children:any}) => {
 
   useEffect(() => {
     socket.on('users-status', (data) => {
-      console.log('user-status: data: ', data)
+      console.log('users-status: data: ', data)
+
+      // update online status
       setOnlineUserIds((prev) => {
         const newSet = new Set([...data.userIds])
         return newSet
       })
+
+      // update new message count
+      if (data.newMessagesInfo) {
+        const roomMessagesInfo = data.newMessagesInfo.filter(info => info.type === 'room');
+        const userMessagesInfo = data.newMessagesInfo.filter(info => info.type === 'user');
+
+        // update rooms
+        setRooms(prev => {
+          let updated = [...prev];
+          for (let i = 0; i < roomMessagesInfo.length; i++) {
+            const loopInfo = roomMessagesInfo[i];
+            const index = updated.findIndex(room => room.id === loopInfo.id);
+            updated[index].newMessageCount = loopInfo.count;
+          }
+          return updated;
+        })
+        // update users
+        setUsers(prev => {
+          let updated = [...prev];
+          for (let i = 0; i < userMessagesInfo.length; i++) {
+            const loopInfo = userMessagesInfo[i];
+            const index = updated.findIndex(user => user.id === loopInfo.id);
+            updated[index].newMessageCount = loopInfo.count;
+          }          
+          return updated;
+        })
+      }
     })
 
     socket.on('rooms-status', (data) => {
@@ -184,6 +212,17 @@ export const ChatProvider = ({children}: {children:any}) => {
 
     socket.on('user-status-update', (data) => {
       console.log('user-status-update: data: ', data)
+
+      const newMessageCount = data.newMessageCount ? data.newMessageCount.length : 0;
+      setUsers(prev => {
+        const userIndex = users.findIndex( user => user.id===data.userId );
+        const user = users[userIndex];
+        user.newMessageCount = newMessageCount;
+        const result = [...prev];
+        result.splice(userIndex, 1, user);
+        return result;
+      })
+      
       if (data.isOn) {
         setOnlineUserIds((prev) => {
           const newSet = new Set(prev)
@@ -199,20 +238,11 @@ export const ChatProvider = ({children}: {children:any}) => {
           return newSet
         })
       }
+      
     })
 
     socket.on('init-room', (payload) => {
-      console.log('on(init-room) payload: ', payload);
       const room = payload.room;
-      // const payloadMessages: any[] = payload.messages;
-      // const messages = payloadMessages.map(message => { 
-      //   return {
-      //     ...message,
-      //     date: message.createdAt
-      //   };
-      // });
-      console.log('init-room: room: ', room)
-      console.log('init-room: messages[0]: ', (payload.messages.length > 0) ? payload.messages[0] : 'no message');
       setMessages(payload.messages)
       setActiveRoom(room)
     })
@@ -344,10 +374,10 @@ export const ChatProvider = ({children}: {children:any}) => {
     socket.emit('enter-group-room', {roomId});
   }
 
-  const setUsers = (users: IUser[]) => {
-    console.log('useChat: setUsers: ', users);
-    setUsersx(users);
-  }
+  // const setUsers = (users: IUser[]) => {
+  //   console.log('useChat: setUsers: ', users);
+  //   setUsersx(users);
+  // }
   const value = {
     users,
     messages,

@@ -1,4 +1,6 @@
 import { useMemo } from 'react';
+
+// hooks
 import useChat from './useChat';
 
 const ChatUserAvatar = () => {

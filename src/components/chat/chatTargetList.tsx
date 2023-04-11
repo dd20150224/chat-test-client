@@ -1,7 +1,13 @@
 import { useState, useEffect } from 'react';
-import ChatTargetItem from './chatTargetItem';
-import { IRoom, IChatTarget } from '@/types';
+
+// types
+import { IRoom, IChatTarget } from './types';
+
+// hooks
 import useChat from './useChat';
+
+// components
+import ChatTargetItem from './chatTargetItem';
 
 const ChatTargetList = () => {
   const { users, rooms, currentUser } = useChat();

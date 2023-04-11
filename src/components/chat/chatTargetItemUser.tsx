@@ -1,14 +1,29 @@
-import { FC, useMemo } from 'react';
+import { FC, useState, useEffect, useMemo } from 'react';
 import { ChatItem } from 'react-chat-elements';
-import { IChatTarget, IChatTargetProps, IUser } from '@/types';
+
+// types
+import { IChatTarget, IChatTargetProps, IUser } from './types';
+
+// hooks
 import useChat from './useChat';
+
+// styles;
 import './chatTargetItem.css';
 
 const ChatTargetItemUser: FC<IChatTargetProps> = ({ item }: {item: IChatTarget }) => {
   const { users, onlineUserIds, enterUserRoom, currentUser } = useChat()
-  const targetItem: IUser | undefined = users.find(
-    (user) => user.id === item.id
-  )
+  const [targetItem, setTargetItem] = useState<IUser|undefined>(undefined);
+  const [ title, setTitle] = useState<string>('');
+
+  useEffect(() => {
+    console.log('useEffect set user: item: ', item);
+    const user = users.find(user => user.id === item.id);    
+    setTargetItem(user);
+  }, [item]);
+
+  // const targetItem: IUser | undefined = users.find(
+  //   (user) => user.id === item.id
+  // )
 
   const unread: number = 0
 
@@ -24,6 +39,15 @@ const ChatTargetItemUser: FC<IChatTargetProps> = ({ item }: {item: IChatTarget }
       },
     }
   }, [targetItem])
+
+  useEffect(() => {
+    console.log('useEffect[targetItem] => updatedTitle: targetItem: ', targetItem);
+    let updatedTitle = `${targetItem?.displayName}`;
+    if (targetItem?.newMessageCount) {
+      updatedTitle = `${updatedTitle} ${targetItem.newMessageCount}`
+    }
+    setTitle(updatedTitle);
+  }, [targetItem]);
 
   const onItemClicked = (evt: any) => {
     if (currentUser) {
@@ -53,7 +77,7 @@ const ChatTargetItemUser: FC<IChatTargetProps> = ({ item }: {item: IChatTarget }
           avatar={targetItem.meta.avatarUrl}
           className={`${onlineUserIds.has(item.id) ? 'active' : 'in-active'} user-item`}
           alt={targetItem.meta.alt}
-          title={targetItem.displayName}
+          title={title}
           subtitle={targetItem.id}
           date={targetItem.meta.lastlyUpdatedAt}
           unread={unread}
